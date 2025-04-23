@@ -565,6 +565,68 @@ impl SpaceGraph {
             self.graph[m2].uv.extend(new_uv);
         }
     }
+
+    fn make_monoportal_scene(&mut self, identify_points: &mut Vec<(usize, usize)>) {
+        let portal_x = (self.sizex as f32 * 0.5) as usize - 1;
+        let start_y = (self.sizey as f32 * 0.2) as usize;
+        let middle_y = (self.sizey as f32 * 0.5) as usize;
+        let end_y = (self.sizey as f32 * 0.8) as usize;
+
+        let sizey = self.sizey;
+        let get_index = |i, j| i * sizey + j;
+
+        // -------------------------------------------------------------------
+
+        // Disconnect singularity points from up and down
+
+        //self.graph[get_index(portal_x, start_y)].down = None;
+        //self.graph[get_index(portal_x, start_y - 1)].up = None;
+//
+        //self.graph[get_index(portal_x, end_y)].up = None;
+        //self.graph[get_index(portal_x, end_y + 1)].down = None;
+//
+        //self.graph[get_index(portal_x, start_y)].down = None;
+        //self.graph[get_index(portal_x, start_y - 1)].up = None;
+//
+        //self.graph[get_index(portal_x, end_y)].up = None;
+        //self.graph[get_index(portal_x, end_y + 1)].down = None;
+//
+        //identify_points.push((get_index(portal_x, start_y), get_index(portal_x, start_y)));
+        //identify_points.push((get_index(portal_x, end_y), get_index(portal_x, end_y)));
+
+        // -------------------------------------------------------------------
+
+        // Connect the main vertical surface
+
+        for j in start_y..=end_y {
+            let a1 = get_index(portal_x, j);
+            let a2 = get_index(portal_x, self.sizey - j - 1);
+            let b1 = get_index(portal_x + 1,j);
+            let b2 = get_index(portal_x + 1, self.sizey - j - 1);
+
+            self.graph[a1].right = Some(a2);
+            self.graph[b1].left = Some(b2);
+
+            //let new_uv = self.graph[m2].uv.clone();
+            //self.graph[m1].uv.extend(new_uv);
+
+            //let new_uv = self.graph[m1].uv.clone();
+            //self.graph[m2].uv.extend(new_uv);
+        }
+        for j in middle_y-1..=middle_y+1 {
+            let a1 = get_index(portal_x, j);
+            let b1 = get_index(portal_x + 1,j);
+
+            self.graph[a1].right = None;
+            self.graph[b1].left = None;
+
+            //let new_uv = self.graph[m2].uv.clone();
+            //self.graph[m1].uv.extend(new_uv);
+
+            //let new_uv = self.graph[m1].uv.clone();
+            //self.graph[m2].uv.extend(new_uv);
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -739,6 +801,9 @@ impl Mesh {
         }
         if scene == "negative_portal" {
             space_graph.make_negative_portal_scene(&mut self.identify_points);
+        }
+        if scene == "monoportal" {
+            space_graph.make_monoportal_scene(&mut self.identify_points);
         }
 
         macro_rules! trying {
