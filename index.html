@@ -111,6 +111,11 @@
                     guidata.size = 50;
                     constants.iterations = 3;
                 }
+                if (guidata.scene == "monoportal") {
+                    guidata.ratio = 1.;
+                    guidata.size = 100;
+                    constants.iterations = 2;
+                }
             }
 
             meshHandle = new MeshHandle(size_x(guidata.size) + 1, size_y(guidata.size) + 1, guidata.useFlatMesh ? "flat" : guidata.scene);
@@ -294,6 +299,7 @@
                 case "flat": return 3;
                 case "portal2": return 4;
                 case "negative_portal": return 5;
+                case "monoportal": return 3;
                 default: return 0;
             }
         }
@@ -352,6 +358,7 @@
                 "cylinder",
                 "torus",
                 "flat",
+                "monoportal",
             ]).onChange(value => {
                 createMesh(false);
             });
